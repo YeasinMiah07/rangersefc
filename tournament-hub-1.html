@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tournament Hub | Rangers Efootball Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --royal:#0B1D3A; --royal2:#122a52; --black:#111111; --deep:#0a0f1c;
+  --cyan:#00D4FF; --gold:#F5A623; --white:#eef3fb; --gray:#8a94a8;
+  --line:rgba(255,255,255,0.08); --win:#2ecc71; --loss:#ff5c5c; --draw:#f5a623;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);color:var(--white);font-family:'Poppins',sans-serif;font-weight:300;}
+h1,h2,h3,h4{font-family:'Orbitron',sans-serif;}
+.container{max-width:1240px;margin:0 auto;padding:40px;}
+
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;background:rgba(10,15,28,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.crest{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--royal2),var(--black));border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:13px;color:var(--cyan);}
+.brand-text .name{font-family:'Orbitron';font-weight:700;font-size:15px;color:var(--white);}
+.brand-text .sub{font-family:'Rajdhani';font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.back-link{font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);text-decoration:none;}
+.back-link:hover{color:var(--cyan);}
+
+.page-head{margin-bottom:40px;}
+.eyebrow{font-family:'Rajdhani';font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);font-size:12px;display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.eyebrow::before{content:'';width:28px;height:2px;background:var(--gold);}
+.page-title{font-size:clamp(30px,4vw,46px);font-weight:900;margin-bottom:10px;}
+.page-desc{color:var(--gray);font-size:14px;max-width:640px;line-height:1.7;}
+
+.card{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:10px;padding:28px;margin-bottom:24px;}
+.card h3{font-family:'Rajdhani';font-weight:700;font-size:17px;margin-bottom:16px;color:var(--white);}
+
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+label{display:block;font-family:'Rajdhani';font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;}
+input,select,textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:5px;padding:10px 12px;color:var(--white);font-family:'Rajdhani';font-size:14px;margin-bottom:16px;}
+textarea{min-height:140px;resize:vertical;font-family:'Rajdhani';}
+.format-toggle{display:flex;gap:10px;margin-bottom:16px;}
+.fmt-btn{flex:1;padding:14px;border:1px solid var(--line);border-radius:6px;background:rgba(255,255,255,0.02);cursor:pointer;text-align:center;transition:.2s;}
+.fmt-btn.active{border-color:var(--cyan);background:rgba(0,212,255,0.08);}
+.fmt-btn b{display:block;font-family:'Orbitron';font-size:14px;color:var(--white);margin-bottom:4px;}
+.fmt-btn span{font-family:'Rajdhani';font-size:11px;color:var(--gray);}
+
+.btn{font-family:'Rajdhani';font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:13px;padding:12px 28px;border:none;border-radius:5px;cursor:pointer;transition:.2s;}
+.btn-cy{background:var(--cyan);color:var(--black);}
+.btn-cy:hover{background:var(--gold);}
+.btn-gh{background:transparent;color:var(--white);border:1px solid var(--line);}
+.btn-gh:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-sm{padding:6px 14px;font-size:11px;}
+
+.player-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.25);padding:6px 12px;border-radius:100px;font-family:'Rajdhani';font-size:12px;color:var(--cyan);display:flex;align-items:center;gap:6px;}
+.chip button{background:none;border:none;color:var(--gray);cursor:pointer;font-size:13px;}
+
+#outputArea{display:none;}
+
+/* LEAGUE TABLE */
+table{width:100%;border-collapse:collapse;font-family:'Rajdhani';}
+th{text-align:left;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);padding:10px;border-bottom:1px solid var(--line);}
+td{padding:10px;border-bottom:1px solid var(--line);font-size:14px;}
+tr:first-child td{color:var(--cyan);}
+.pos-1{border-left:3px solid var(--gold);}
+
+.fixture-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:6px;margin-bottom:8px;font-family:'Rajdhani';}
+.fixture-teams{font-weight:600;font-size:14px;}
+.score-inputs{display:flex;align-items:center;gap:8px;}
+.score-inputs input{width:50px;margin:0;text-align:center;padding:6px;}
+.score-inputs button{padding:6px 12px;}
+
+/* GROUPS */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+.group-box{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:8px;padding:18px;}
+.group-title{font-family:'Orbitron';font-size:13px;color:var(--gold);margin-bottom:12px;}
+
+/* BRACKET */
+.bracket{display:flex;gap:40px;overflow-x:auto;padding:20px 0;}
+.round-col{display:flex;flex-direction:column;justify-content:space-around;gap:20px;min-width:220px;}
+.round-label{font-family:'Rajdhani';font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-align:center;margin-bottom:8px;}
+.match-box{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+.slot{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-family:'Rajdhani';font-size:13px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--line);}
+.slot:last-child{border-bottom:none;}
+.slot:hover{background:rgba(0,212,255,0.08);}
+.slot.winner{background:rgba(46,204,113,0.12);color:var(--win);font-weight:700;}
+.slot.empty{color:var(--gray);cursor:default;}
+.slot.empty:hover{background:none;}
+.champion-box{margin-top:20px;text-align:center;padding:24px;background:linear-gradient(135deg,rgba(245,166,35,0.1),transparent);border:1px solid var(--gold);border-radius:8px;}
+.champion-box .trophy{font-size:40px;margin-bottom:8px;}
+.champion-box b{font-family:'Orbitron';font-size:22px;color:var(--gold);}
+
+.note{font-family:'Rajdhani';font-size:12px;color:var(--gray);border:1px dashed var(--line);padding:14px 18px;border-radius:6px;margin-top:20px;line-height:1.6;}
+
+@media(max-width:800px){
+  .setup-grid{grid-template-columns:1fr;}
+  .format-toggle{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- ADMIN LOCK -->
+<div id="lockScreen" style="position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#060a12,#0B1D3A);display:flex;align-items:center;justify-content:center;">
+  <div style="max-width:360px;width:100%;padding:36px;background:rgba(255,255,255,0.03);border:1px solid rgba(0,212,255,0.3);border-radius:12px;text-align:center;">
+    <div style="width:60px;height:60px;margin:0 auto 18px;border-radius:12px;background:rgba(245,166,35,0.1);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;">🔒</div>
+    <h3 style="font-family:'Orbitron';font-size:16px;margin-bottom:6px;">Admin Access Only</h3>
+    <p style="font-family:'Rajdhani';font-size:12px;color:var(--gray);margin-bottom:20px;">Tournament Hub is restricted to club admins. Enter the access code to continue.</p>
+    <input id="lockInput" type="password" placeholder="Access code" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--line);border-radius:6px;padding:11px;color:var(--white);font-family:'Rajdhani';font-size:14px;margin-bottom:12px;" onkeydown="if(event.key==='Enter')tryUnlock()">
+    <button onclick="tryUnlock()" style="width:100%;background:var(--gold);color:#111;border:none;padding:11px;border-radius:6px;font-family:'Rajdhani';font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Unlock</button>
+    <p id="lockError" style="display:none;color:var(--loss);font-family:'Rajdhani';font-size:12px;margin-top:10px;">Incorrect code — try again.</p>
+    <a href="rangers-efc.html" style="display:block;margin-top:16px;font-family:'Rajdhani';font-size:12px;color:var(--gray);">← Back to Main Site</a>
+  </div>
+</div>
+
+<nav>
+  <a href="#" class="brand">
+    <div class="crest">RFC</div>
+    <div class="brand-text"><div class="name">RANGERS</div><div class="sub">Tournament Hub</div></div>
+  </a>
+  <a href="rangers-efc.html" class="back-link">← Back to Main Site</a>
+</nav>
+
+<div class="container">
+  <div class="page-head">
+    <div class="eyebrow">Host a Tournament</div>
+    <h1 class="page-title">Intra-Club Tournament Hub</h1>
+    <p class="page-desc">Set up a League or UCL-style Champions League tournament for your squad. Add players, auto-generate fixtures or groups, log results, and watch the table or knockout bracket update live. Runs in this browser session — export or screenshot results to post in the tournament archive.</p>
+  </div>
+
+  <!-- SETUP -->
+  <div class="card" id="setupCard">
+    <h3>1. Tournament Setup</h3>
+    <div class="setup-grid">
+      <div>
+        <label>Tournament Name</label>
+        <input id="tName" placeholder="e.g. Rangers UCL Season 2">
+        <label>Format</label>
+        <div class="format-toggle">
+          <div class="fmt-btn active" data-fmt="league" onclick="selectFormat('league')">
+            <b>🏁 League</b><span>Round robin table, everyone plays everyone</span>
+          </div>
+          <div class="fmt-btn" data-fmt="ucl" onclick="selectFormat('ucl')">
+            <b>🏆 UCL Style</b><span>Groups → Knockout bracket → Final</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label>Add Players / Teams (one per line, or comma separated)</label>
+        <textarea id="tPlayers" placeholder="RFC Captain
+Striker Alpha
+Wing King
+Left Flame
+Box Maestro
+Wall Keeper
+Stone Defender
+Iron Back"></textarea>
+        <div class="player-chips" id="playerChips"></div>
+      </div>
+    </div>
+    <button class="btn btn-cy" onclick="loadSamplePlayers()">Load Sample 8 Players</button>
+    <button class="btn btn-gh" onclick="generateTournament()">Generate Tournament →</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="outputArea">
+    <div class="card" id="header-card">
+      <h3 id="liveTournamentName">—</h3>
+      <p id="syncBadge" style="font-family:'Rajdhani';font-size:12px;color:var(--gray);margin-bottom:14px;">Not yet synced</p>
+      <a href="tournament-live.html" target="_blank" class="btn btn-gh btn-sm" style="text-decoration:none;display:inline-block;">🌐 View Public Page</a>
+      <button class="btn btn-gh btn-sm" onclick="resetTournament()">↺ Start New Tournament</button>
+    </div>
+
+    <!-- LEAGUE OUTPUT -->
+    <div id="leagueOutput" style="display:none;">
+      <div class="card">
+        <h3>Fixtures — Enter Results</h3>
+        <div id="fixturesList"></div>
+      </div>
+      <div class="card">
+        <h3>Standings</h3>
+        <table>
+          <thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
+          <tbody id="leagueTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- UCL OUTPUT -->
+    <div id="uclOutput" style="display:none;">
+      <div class="card">
+        <h3>Group Stage — Enter Results</h3>
+        <div id="groupFixtures"></div>
+      </div>
+      <div class="card">
+        <h3>Group Standings</h3>
+        <div class="groups-grid" id="groupTables"></div>
+        <button class="btn btn-cy" style="margin-top:20px;" onclick="advanceToKnockout()">Advance Top 2 → Knockout Stage</button>
+      </div>
+      <div class="card" id="knockoutCard" style="display:none;">
+        <h3>Knockout Bracket</h3>
+        <p style="font-family:'Rajdhani';font-size:12px;color:var(--gray);margin-bottom:12px;">Click a player's name in a matchup to advance them to the next round.</p>
+        <div class="bracket" id="bracketArea"></div>
+        <div id="championBox"></div>
+      </div>
+    </div>
+
+    <div class="note">⚠ This tool runs entirely in your browser for live hosting sessions — nothing is saved to a server. To keep a permanent tournament archive on your site (past champions, brackets, MVP history), that data needs to be stored in a real database as noted in your site's Admin panel section.</div>
+  </div>
+</div>
+
+<script>
+// ─── PUBLIC SYNC (shared storage) ───
+// This lets tournament-live.html (public, no password) show whatever
+// is currently running here. Works while viewing through Claude's
+// artifact preview. If you host these files on your own domain later,
+// this sync won't carry over — that needs a real backend + database.
+const STORAGE_KEY = 'rangers-tournament-state';
+
+async function saveState(){
+  const state = {
+    name: document.getElementById('tName').value || 'Untitled Tournament',
+    format: currentFormat,
+    players, leagueFixtures, groups, groupFixtureSets, bracketRounds,
+    updatedAt: new Date().toISOString()
+  };
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state), true);
+    flashSyncBadge();
+  }catch(e){ console.error('Sync failed:', e); }
+}
+
+async function clearState(){
+  try{ await window.storage.delete(STORAGE_KEY, true); }catch(e){}
+}
+
+function flashSyncBadge(){
+  const el = document.getElementById('syncBadge');
+  if(!el) return;
+  el.textContent = '✓ Synced to public page · ' + new Date().toLocaleTimeString();
+  el.style.color = 'var(--win)';
+  setTimeout(()=>{ el.style.color = 'var(--gray)'; }, 1500);
+}
+
+// ⚠ Client-side lock only — a real deployment needs server-side auth.
+// Change this code before publishing, and know that anyone who reads
+// the page source can find it. For real security this check must
+// happen on a server, not in the browser.
+const ADMIN_CODE = "Rangers2026";
+function tryUnlock(){
+  const val = document.getElementById('lockInput').value;
+  if(val === ADMIN_CODE){
+    document.getElementById('lockScreen').style.display = 'none';
+  } else {
+    document.getElementById('lockError').style.display = 'block';
+  }
+}
+
+let currentFormat = 'league';
+let players = [];
+
+function selectFormat(fmt){
+  currentFormat = fmt;
+  document.querySelectorAll('.fmt-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.fmt-btn[data-fmt="${fmt}"]`).classList.add('active');
+}
+
+function loadSamplePlayers(){
+  document.getElementById('tPlayers').value = "RFC Captain\nStriker Alpha\nWing King\nLeft Flame\nBox Maestro\nWall Keeper\nStone Defender\nIron Back";
+}
+
+function parsePlayers(){
+  const raw = document.getElementById('tPlayers').value;
+  return raw.split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+}
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// ─── LEAGUE LOGIC ───
+let leagueFixtures = [];
+function buildRoundRobin(list){
+  const fixtures = [];
+  for(let i=0;i<list.length;i++){
+    for(let j=i+1;j<list.length;j++){
+      fixtures.push({home:list[i], away:list[j], hs:null, as:null});
+    }
+  }
+  return fixtures;
+}
+
+function renderFixtures(){
+  const wrap = document.getElementById('fixturesList');
+  wrap.innerHTML = leagueFixtures.map((f,i)=>`
+    <div class="fixture-row">
+      <div class="fixture-teams">${f.home} <span style="color:var(--gray)">vs</span> ${f.away}</div>
+      <div class="score-inputs">
+        <input type="number" min="0" id="hs-${i}" value="${f.hs??''}" placeholder="0">
+        <span>–</span>
+        <input type="number" min="0" id="as-${i}" value="${f.as??''}" placeholder="0">
+        <button class="btn btn-cy btn-sm" onclick="submitScore(${i})">Save</button>
+      </div>
+    </div>`).join('');
+}
+
+function submitScore(i){
+  const hs = parseInt(document.getElementById('hs-'+i).value);
+  const as = parseInt(document.getElementById('as-'+i).value);
+  if(isNaN(hs)||isNaN(as)) return;
+  leagueFixtures[i].hs = hs; leagueFixtures[i].as = as;
+  renderLeagueTable();
+  saveState();
+}
+
+function renderLeagueTable(){
+  const stats = {};
+  players.forEach(p=>stats[p]={team:p,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0});
+  leagueFixtures.forEach(f=>{
+    if(f.hs===null||f.as===null) return;
+    const H=stats[f.home], A=stats[f.away];
+    H.p++; A.p++; H.gf+=f.hs; H.ga+=f.as; A.gf+=f.as; A.ga+=f.hs;
+    if(f.hs>f.as){H.w++;H.pts+=3;A.l++;}
+    else if(f.hs<f.as){A.w++;A.pts+=3;H.l++;}
+    else{H.d++;A.d++;H.pts++;A.pts++;}
+  });
+  const rows = Object.values(stats).sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf);
+  document.getElementById('leagueTable').innerHTML = rows.map((r,i)=>`
+    <tr class="${i===0?'pos-1':''}">
+      <td>${i+1}</td><td>${r.team}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
+      <td>${r.gf}</td><td>${r.ga}</td><td>${r.gf-r.ga}</td><td><b>${r.pts}</b></td>
+    </tr>`).join('');
+}
+
+// ─── UCL LOGIC ───
+let groups = [];
+let groupFixtureSets = [];
+let bracketRounds = [];
+
+function buildGroups(list){
+  const shuffled = shuffle(list);
+  const groupCount = Math.max(2, Math.ceil(shuffled.length/4));
+  const g = Array.from({length:groupCount}, ()=>[]);
+  shuffled.forEach((p,i)=> g[i%groupCount].push(p));
+  return g;
+}
+
+function renderGroupFixtures(){
+  const wrap = document.getElementById('groupFixtures');
+  wrap.innerHTML = groups.map((g,gi)=>{
+    const fx = groupFixtureSets[gi];
+    return `<h4 style="font-family:'Rajdhani';color:var(--cyan);margin:14px 0 8px;">Group ${String.fromCharCode(65+gi)}</h4>` +
+      fx.map((f,fi)=>`
+        <div class="fixture-row">
+          <div class="fixture-teams">${f.home} <span style="color:var(--gray)">vs</span> ${f.away}</div>
+          <div class="score-inputs">
+            <input type="number" min="0" id="ghs-${gi}-${fi}" value="${f.hs??''}" placeholder="0">
+            <span>–</span>
+            <input type="number" min="0" id="gas-${gi}-${fi}" value="${f.as??''}" placeholder="0">
+            <button class="btn btn-cy btn-sm" onclick="submitGroupScore(${gi},${fi})">Save</button>
+          </div>
+        </div>`).join('');
+  }).join('');
+}
+
+function submitGroupScore(gi,fi){
+  const hs = parseInt(document.getElementById(`ghs-${gi}-${fi}`).value);
+  const as = parseInt(document.getElementById(`gas-${gi}-${fi}`).value);
+  if(isNaN(hs)||isNaN(as)) return;
+  groupFixtureSets[gi][fi].hs = hs; groupFixtureSets[gi][fi].as = as;
+  renderGroupTables();
+  saveState();
+}
+
+function computeGroupStandings(gi){
+  const stats = {};
+  groups[gi].forEach(p=>stats[p]={team:p,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0});
+  groupFixtureSets[gi].forEach(f=>{
+    if(f.hs===null||f.as===null) return;
+    const H=stats[f.home], A=stats[f.away];
+    H.p++; A.p++; H.gf+=f.hs; H.ga+=f.as; A.gf+=f.as; A.ga+=f.hs;
+    if(f.hs>f.as){H.w++;H.pts+=3;A.l++;}
+    else if(f.hs<f.as){A.w++;A.pts+=3;H.l++;}
+    else{H.d++;A.d++;H.pts++;A.pts++;}
+  });
+  return Object.values(stats).sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf);
+}
+
+function renderGroupTables(){
+  const wrap = document.getElementById('groupTables');
+  wrap.innerHTML = groups.map((g,gi)=>{
+    const rows = computeGroupStandings(gi);
+    return `<div class="group-box">
+      <div class="group-title">GROUP ${String.fromCharCode(65+gi)}</div>
+      <table>
+        <thead><tr><th>Team</th><th>P</th><th>Pts</th></tr></thead>
+        <tbody>${rows.map((r,i)=>`<tr class="${i<2?'pos-1':''}"><td>${r.team}</td><td>${r.p}</td><td><b>${r.pts}</b></td></tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+function advanceToKnockout(){
+  const qualifiers = [];
+  groups.forEach((g,gi)=>{
+    const rows = computeGroupStandings(gi);
+    qualifiers.push(rows[0]?.team, rows[1]?.team);
+  });
+  const clean = qualifiers.filter(Boolean);
+  if(clean.length < 2){ alert('Not enough qualified teams yet — enter more group results first.'); return; }
+  buildBracket(clean);
+  document.getElementById('knockoutCard').style.display = 'block';
+  saveState();
+}
+
+function buildBracket(list){
+  let size = 2; while(size < list.length) size *= 2;
+  const padded = shuffle(list);
+  while(padded.length < size) padded.push(null); // bye
+  const round1 = [];
+  for(let i=0;i<padded.length;i+=2){
+    round1.push({a:padded[i], b:padded[i+1], winner: padded[i+1]===null ? padded[i] : (padded[i]===null ? padded[i+1] : null)});
+  }
+  bracketRounds = [round1];
+  let count = round1.length;
+  while(count > 1){
+    count = count/2;
+    bracketRounds.push(Array.from({length:count}, ()=>({a:null,b:null,winner:null})));
+  }
+  propagateByes();
+  renderBracket();
+}
+
+function propagateByes(){
+  for(let r=0;r<bracketRounds.length-1;r++){
+    bracketRounds[r].forEach((m,i)=>{
+      if(m.winner){
+        const next = bracketRounds[r+1][Math.floor(i/2)];
+        if(i%2===0) next.a = m.winner; else next.b = m.winner;
+        if(next.a && next.b===null && bracketRounds[r+1]===bracketRounds[bracketRounds.length-1] && bracketRounds.length===r+2){
+          // leave as is, will fill when sibling resolves
+        }
+      }
+    });
+  }
+}
+
+function pickWinner(r,m,side){
+  const match = bracketRounds[r][m];
+  const val = side==='a' ? match.a : match.b;
+  if(!val) return;
+  match.winner = val;
+  if(r < bracketRounds.length-1){
+    const next = bracketRounds[r+1][Math.floor(m/2)];
+    if(m%2===0) next.a = val; else next.b = val;
+  }
+  renderBracket();
+  saveState();
+}
+
+function renderBracket(){
+  const area = document.getElementById('bracketArea');
+  const roundNames = (n)=>{
+    const total = bracketRounds.length;
+    const namesFromEnd = ['Final','Semifinal','Quarterfinal','Round of 16','Round of 32'];
+    const idxFromEnd = total-1-n;
+    return namesFromEnd[idxFromEnd] || `Round ${n+1}`;
+  };
+  area.innerHTML = bracketRounds.map((round,r)=>`
+    <div class="round-col">
+      <div class="round-label">${roundNames(r)}</div>
+      ${round.map((m,mi)=>`
+        <div class="match-box">
+          <div class="slot ${m.winner===m.a && m.a?'winner':''} ${!m.a?'empty':''}" ${m.a?`onclick="pickWinner(${r},${mi},'a')"`:''}>${m.a || 'TBD'}</div>
+          <div class="slot ${m.winner===m.b && m.b?'winner':''} ${!m.b?'empty':''}" ${m.b?`onclick="pickWinner(${r},${mi},'b')"`:''}>${m.b || 'TBD'}</div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  const finalMatch = bracketRounds[bracketRounds.length-1][0];
+  const champBox = document.getElementById('championBox');
+  if(finalMatch && finalMatch.winner){
+    champBox.innerHTML = `<div class="champion-box"><div class="trophy">🏆</div><b>${finalMatch.winner}</b><div style="font-family:'Rajdhani';color:var(--gray);letter-spacing:1px;margin-top:4px;">CHAMPION</div></div>`;
+  } else {
+    champBox.innerHTML = '';
+  }
+}
+
+// ─── SHARED ───
+function generateTournament(){
+  players = parsePlayers();
+  if(players.length < 2){ alert('Add at least 2 players/teams.'); return; }
+
+  document.getElementById('liveTournamentName').textContent = (document.getElementById('tName').value || 'Untitled Tournament') + ' — ' + (currentFormat==='league' ? 'League Format' : 'UCL Format');
+  document.getElementById('setupCard').style.display = 'none';
+  document.getElementById('outputArea').style.display = 'block';
+
+  if(currentFormat === 'league'){
+    document.getElementById('leagueOutput').style.display = 'block';
+    document.getElementById('uclOutput').style.display = 'none';
+    leagueFixtures = buildRoundRobin(players);
+    renderFixtures();
+    renderLeagueTable();
+  } else {
+    document.getElementById('leagueOutput').style.display = 'none';
+    document.getElementById('uclOutput').style.display = 'block';
+    groups = buildGroups(players);
+    groupFixtureSets = groups.map(g => buildRoundRobin(g));
+    renderGroupFixtures();
+    renderGroupTables();
+    document.getElementById('knockoutCard').style.display = 'none';
+  }
+  saveState();
+}
+
+function resetTournament(){
+  document.getElementById('setupCard').style.display = 'block';
+  document.getElementById('outputArea').style.display = 'none';
+  document.getElementById('tPlayers').value = '';
+  document.getElementById('tName').value = '';
+  clearState();
+}
+</script>
+</body>
+</html>

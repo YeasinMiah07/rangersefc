@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Tournament | Rangers Efootball Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--royal:#0B1D3A;--royal2:#122a52;--black:#111111;--deep:#0a0f1c;--cyan:#00D4FF;--gold:#F5A623;--white:#eef3fb;--gray:#8a94a8;--line:rgba(255,255,255,0.08);--win:#2ecc71;--loss:#ff5c5c;--draw:#f5a623;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);color:var(--white);font-family:'Poppins',sans-serif;font-weight:300;}
+h1,h2,h3,h4{font-family:'Orbitron',sans-serif;}
+.container{max-width:1240px;margin:0 auto;padding:40px;}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;background:rgba(10,15,28,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.crest{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--royal2),var(--black));border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:13px;color:var(--cyan);}
+.brand-text .name{font-family:'Orbitron';font-weight:700;font-size:15px;}
+.brand-text .sub{font-family:'Rajdhani';font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.back-link{font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);text-decoration:none;}
+.back-link:hover{color:var(--cyan);}
+.eyebrow{font-family:'Rajdhani';font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);font-size:12px;display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.eyebrow::before{content:'';width:28px;height:2px;background:var(--gold);}
+.page-title{font-size:clamp(30px,4vw,46px);font-weight:900;margin-bottom:6px;}
+.live-dot{display:inline-flex;align-items:center;gap:8px;font-family:'Rajdhani';font-size:12px;color:var(--gray);margin-bottom:28px;}
+.live-dot i{width:7px;height:7px;background:var(--loss);border-radius:50%;animation:blip 1.4s infinite;}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.3}}
+
+.card{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:10px;padding:28px;margin-bottom:24px;}
+.card h3{font-family:'Rajdhani';font-weight:700;font-size:17px;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;font-family:'Rajdhani';}
+th{text-align:left;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);padding:10px;border-bottom:1px solid var(--line);}
+td{padding:10px;border-bottom:1px solid var(--line);font-size:14px;}
+.pos-1{border-left:3px solid var(--gold);}
+.fixture-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:6px;margin-bottom:8px;font-family:'Rajdhani';}
+.fixture-teams{font-weight:600;font-size:14px;}
+.fixture-score{font-family:'Orbitron';font-weight:700;color:var(--cyan);font-size:15px;}
+.fixture-score.pending{color:var(--gray);font-family:'Rajdhani';font-size:12px;}
+
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+.group-box{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:8px;padding:18px;}
+.group-title{font-family:'Orbitron';font-size:13px;color:var(--gold);margin-bottom:12px;}
+
+.bracket{display:flex;gap:40px;overflow-x:auto;padding:20px 0;}
+.round-col{display:flex;flex-direction:column;justify-content:space-around;gap:20px;min-width:220px;}
+.round-label{font-family:'Rajdhani';font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);text-align:center;margin-bottom:8px;}
+.match-box{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+.slot{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-family:'Rajdhani';font-size:13px;border-bottom:1px solid var(--line);}
+.slot:last-child{border-bottom:none;}
+.slot.winner{background:rgba(46,204,113,0.12);color:var(--win);font-weight:700;}
+.slot.empty{color:var(--gray);}
+.champion-box{margin-top:20px;text-align:center;padding:24px;background:linear-gradient(135deg,rgba(245,166,35,0.1),transparent);border:1px solid var(--gold);border-radius:8px;}
+.champion-box .trophy{font-size:40px;margin-bottom:8px;}
+.champion-box b{font-family:'Orbitron';font-size:22px;color:var(--gold);}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray);font-family:'Rajdhani';}
+.empty-state .icon{font-size:44px;margin-bottom:14px;}
+.refresh-btn{font-family:'Rajdhani';font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:12px;padding:9px 20px;border:1px solid var(--line);border-radius:5px;background:transparent;color:var(--white);cursor:pointer;}
+.refresh-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.updated-note{font-family:'Rajdhani';font-size:12px;color:var(--gray);margin-top:14px;}
+
+.nav-toggle{display:none;background:transparent;border:1px solid var(--line);color:var(--white);width:40px;height:40px;border-radius:5px;font-size:18px;cursor:pointer;}
+.navlinks{display:flex;gap:22px;list-style:none;align-items:center;}
+.navlinks a{font-family:'Rajdhani';font-weight:600;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:.2s;}
+.navlinks a:hover{color:var(--cyan);}
+.navlinks a.active{color:var(--cyan);}
+.navlinks .cta{background:var(--cyan);color:var(--black)!important;padding:8px 16px;border-radius:3px;font-weight:700!important;}
+.navlinks .admin-link{border:1px solid var(--gold);color:var(--gold)!important;padding:7px 14px;border-radius:3px;font-weight:700!important;}
+@media(max-width:900px){
+  .nav-toggle{display:block;}
+  .navlinks{display:none;position:absolute;top:72px;left:0;right:0;background:#0a0f1c;flex-direction:column;padding:14px 24px 20px;border-bottom:1px solid var(--line);gap:2px;box-shadow:0 20px 40px rgba(0,0,0,0.4);}
+  .navlinks.open{display:flex;}
+  .navlinks li{width:100%;}
+  .navlinks a{display:block;width:100%;padding:13px 8px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="brand"><div class="crest">RFC</div><div class="brand-text"><div class="name">RANGERS</div><div class="sub">Live Tournament</div></div></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  <ul class="navlinks" id="navLinks">
+    <li><a href="index.html" data-page="home">Home</a></li>
+    <li><a href="players.html" data-page="players">Roster</a></li>
+    <li><a href="tournament-live.html" data-page="live" class="active">🔴 Live Tournament</a></li>
+    <li><a href="rules.html" data-page="rules">Rules</a></li>
+    <li><a href="news.html" data-page="news">News</a></li>
+    <li><a href="mvp-vote.html" data-page="mvp">MVP Vote</a></li>
+    <li><a href="index.html#join" class="cta">Join Us</a></li>
+    <li><a href="tournament-hub.html" class="admin-link">🔒 Admin</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="eyebrow">Public Live View</div>
+  <h1 class="page-title" id="pageTitle">Live Tournament</h1>
+  <div class="live-dot"><i></i> Auto-refreshing · read-only public view</div>
+
+  <div id="content"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'rangers-tournament-state';
+
+async function loadAndRender(){
+  let state = null;
+  try{
+    const res = await window.storage.get(STORAGE_KEY, true);
+    state = res ? JSON.parse(res.value) : null;
+  }catch(e){ state = null; }
+
+  const content = document.getElementById('content');
+  if(!state){
+    document.getElementById('pageTitle').textContent = 'No Live Tournament';
+    content.innerHTML = `<div class="card empty-state">
+      <div class="icon">🏟️</div>
+      <p>No tournament is currently being hosted.</p>
+      <p style="margin-top:6px;">Check back once a club admin starts one from the Tournament Hub.</p>
+    </div>`;
+    return;
+  }
+
+  document.getElementById('pageTitle').textContent = state.name;
+
+  if(state.format === 'league'){
+    content.innerHTML = renderLeagueView(state);
+  } else {
+    content.innerHTML = renderUclView(state);
+  }
+  const noteHtml = `<p class="updated-note">Last updated: ${new Date(state.updatedAt).toLocaleString()} · <button class="refresh-btn" onclick="loadAndRender()">↻ Refresh</button></p>`;
+  content.innerHTML += noteHtml;
+}
+
+function computeStandings(players, fixtures){
+  const stats = {};
+  players.forEach(p=>stats[p]={team:p,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0});
+  fixtures.forEach(f=>{
+    if(f.hs===null||f.hs===undefined||f.as===null||f.as===undefined) return;
+    const H=stats[f.home], A=stats[f.away];
+    if(!H||!A) return;
+    H.p++; A.p++; H.gf+=f.hs; H.ga+=f.as; A.gf+=f.as; A.ga+=f.hs;
+    if(f.hs>f.as){H.w++;H.pts+=3;A.l++;}
+    else if(f.hs<f.as){A.w++;A.pts+=3;H.l++;}
+    else{H.d++;A.d++;H.pts++;A.pts++;}
+  });
+  return Object.values(stats).sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf);
+}
+
+function renderLeagueView(state){
+  const rows = computeStandings(state.players, state.leagueFixtures);
+  const fixturesHtml = state.leagueFixtures.map(f=>{
+    const done = f.hs!==null && f.hs!==undefined;
+    return `<div class="fixture-row">
+      <div class="fixture-teams">${f.home} <span style="color:var(--gray)">vs</span> ${f.away}</div>
+      <div class="${done?'fixture-score':'fixture-score pending'}">${done ? f.hs+' – '+f.as : 'Not played'}</div>
+    </div>`;
+  }).join('');
+  const tableHtml = rows.map((r,i)=>`
+    <tr class="${i===0?'pos-1':''}">
+      <td>${i+1}</td><td>${r.team}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
+      <td>${r.gf}</td><td>${r.ga}</td><td>${r.gf-r.ga}</td><td><b>${r.pts}</b></td>
+    </tr>`).join('');
+  return `
+    <div class="card"><h3>Standings / Ranking</h3>
+      <table><thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
+      <tbody>${tableHtml}</tbody></table>
+    </div>
+    <div class="card"><h3>Schedule & Results</h3>${fixturesHtml}</div>`;
+}
+
+function renderUclView(state){
+  let groupsHtml = '<div class="card"><h3>Group Stage — Standings</h3><div class="groups-grid">';
+  state.groups.forEach((g,gi)=>{
+    const rows = computeStandings(g, state.groupFixtureSets[gi]);
+    groupsHtml += `<div class="group-box"><div class="group-title">GROUP ${String.fromCharCode(65+gi)}</div>
+      <table><thead><tr><th>Team</th><th>P</th><th>Pts</th></tr></thead>
+      <tbody>${rows.map((r,i)=>`<tr class="${i<2?'pos-1':''}"><td>${r.team}</td><td>${r.p}</td><td><b>${r.pts}</b></td></tr>`).join('')}</tbody></table>
+    </div>`;
+  });
+  groupsHtml += '</div></div>';
+
+  let fixturesHtml = '<div class="card"><h3>Group Fixtures</h3>';
+  state.groups.forEach((g,gi)=>{
+    fixturesHtml += `<h4 style="font-family:'Rajdhani';color:var(--cyan);margin:14px 0 8px;">Group ${String.fromCharCode(65+gi)}</h4>`;
+    state.groupFixtureSets[gi].forEach(f=>{
+      const done = f.hs!==null && f.hs!==undefined;
+      fixturesHtml += `<div class="fixture-row">
+        <div class="fixture-teams">${f.home} <span style="color:var(--gray)">vs</span> ${f.away}</div>
+        <div class="${done?'fixture-score':'fixture-score pending'}">${done ? f.hs+' – '+f.as : 'Not played'}</div>
+      </div>`;
+    });
+  });
+  fixturesHtml += '</div>';
+
+  let bracketHtml = '';
+  if(state.bracketRounds && state.bracketRounds.length){
+    const roundNames = (n, total)=>{
+      const namesFromEnd = ['Final','Semifinal','Quarterfinal','Round of 16','Round of 32'];
+      const idxFromEnd = total-1-n;
+      return namesFromEnd[idxFromEnd] || `Round ${n+1}`;
+    };
+    const total = state.bracketRounds.length;
+    bracketHtml = `<div class="card"><h3>Knockout Bracket</h3><div class="bracket">` +
+      state.bracketRounds.map((round,r)=>`
+        <div class="round-col">
+          <div class="round-label">${roundNames(r,total)}</div>
+          ${round.map(m=>`
+            <div class="match-box">
+              <div class="slot ${m.winner===m.a && m.a?'winner':''} ${!m.a?'empty':''}">${m.a || 'TBD'}</div>
+              <div class="slot ${m.winner===m.b && m.b?'winner':''} ${!m.b?'empty':''}">${m.b || 'TBD'}</div>
+            </div>`).join('')}
+        </div>`).join('') + `</div>`;
+    const finalMatch = state.bracketRounds[state.bracketRounds.length-1][0];
+    if(finalMatch && finalMatch.winner){
+      bracketHtml += `<div class="champion-box"><div class="trophy">🏆</div><b>${finalMatch.winner}</b><div style="font-family:'Rajdhani';color:var(--gray);letter-spacing:1px;margin-top:4px;">CHAMPION</div></div>`;
+    }
+    bracketHtml += `</div>`;
+  }
+
+  return groupsHtml + fixturesHtml + bracketHtml;
+}
+
+loadAndRender();
+setInterval(loadAndRender, 15000); // auto-refresh every 15s
+</script>
+
+<script>
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=> navLinks.classList.remove('open')));
+</script>
+</body>
+</html>
