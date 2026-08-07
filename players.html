@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Profiles | Rangers Efootball Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase-client.js"></script>
+<style>
+:root{--royal:#0B1D3A;--royal2:#122a52;--black:#111111;--deep:#0a0f1c;--cyan:#00D4FF;--gold:#F5A623;--white:#eef3fb;--gray:#8a94a8;--line:rgba(255,255,255,0.08);--win:#2ecc71;--loss:#ff5c5c;--draw:#f5a623;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);color:var(--white);font-family:'Poppins',sans-serif;font-weight:300;}
+h1,h2,h3,h4{font-family:'Orbitron',sans-serif;}
+.container{max-width:1240px;margin:0 auto;padding:40px;}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;background:rgba(10,15,28,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.crest{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--royal2),var(--black));border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;object-fit:contain;background-size:cover;font-family:'Orbitron';font-weight:900;font-size:13px;color:var(--cyan);}
+.brand-text .name{font-family:'Orbitron';font-weight:700;font-size:15px;}
+.brand-text .sub{font-family:'Rajdhani';font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.back-link{font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);text-decoration:none;}
+.back-link:hover{color:var(--cyan);}
+.eyebrow{font-family:'Rajdhani';font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);font-size:12px;display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.eyebrow::before{content:'';width:28px;height:2px;background:var(--gold);}
+.page-title{font-size:clamp(30px,4vw,46px);font-weight:900;margin-bottom:10px;}
+.page-desc{color:var(--gray);font-size:14px;max-width:640px;line-height:1.7;margin-bottom:32px;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;}
+.pcard{background:linear-gradient(160deg,rgba(0,212,255,0.04),rgba(0,0,0,0.5));border:1px solid var(--line);border-radius:8px;padding:22px 18px;text-align:center;transition:.25s;cursor:pointer;}
+.pcard:hover{border-color:rgba(0,212,255,0.4);transform:translateY(-4px);}
+.p-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--royal2),var(--black));border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Orbitron';font-weight:700;font-size:18px;color:var(--cyan);}
+.p-name{font-family:'Rajdhani';font-weight:700;font-size:15px;margin-bottom:6px;}
+.p-pos{display:inline-block;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);padding:3px 12px;border-radius:100px;font-family:'Rajdhani';font-size:10px;letter-spacing:1.5px;color:var(--cyan);text-transform:uppercase;}
+.p-rating{margin-top:10px;font-family:'Orbitron';font-weight:900;font-size:24px;color:var(--gold);}
+
+/* DETAIL PANEL */
+#overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,0.85);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px;}
+#overlay.show{display:flex;}
+.detail-card{background:#0d1424;border:1px solid var(--cyan);border-radius:14px;max-width:700px;width:100%;max-height:88vh;overflow-y:auto;padding:36px;position:relative;}
+.close-btn{position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.06);border:none;color:var(--white);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;}
+.detail-head{display:flex;gap:20px;align-items:center;margin-bottom:24px;}
+.detail-avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--royal2),var(--black));border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:28px;color:var(--gold);flex-shrink:0;}
+.detail-name{font-family:'Orbitron';font-size:24px;font-weight:900;}
+.detail-sub{font-family:'Rajdhani';color:var(--gray);font-size:13px;letter-spacing:1px;margin-top:4px;}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-box{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:8px;padding:14px;text-align:center;}
+.stat-box b{display:block;font-family:'Orbitron';font-size:22px;color:var(--cyan);}
+.stat-box span{font-family:'Rajdhani';font-size:10px;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;}
+.detail-section{margin-bottom:22px;}
+.detail-section h4{font-family:'Rajdhani';font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.history-item{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-family:'Rajdhani';font-size:13px;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);color:var(--gold);padding:5px 12px;border-radius:100px;font-family:'Rajdhani';font-size:11px;letter-spacing:1px;}
+.form-row-d{display:flex;gap:6px;}
+.fdot{width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani';font-weight:700;font-size:12px;color:#fff;}
+.fw{background:var(--win);}.fl{background:var(--loss);}.fd{background:var(--draw);}
+
+.nav-toggle{display:none;background:transparent;border:1px solid var(--line);color:var(--white);width:40px;height:40px;border-radius:5px;font-size:18px;cursor:pointer;}
+.navlinks{display:flex;gap:22px;list-style:none;align-items:center;}
+.navlinks a{font-family:'Rajdhani';font-weight:600;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:.2s;}
+.navlinks a:hover{color:var(--cyan);}
+.navlinks a.active{color:var(--cyan);}
+.navlinks .cta{background:var(--cyan);color:var(--black)!important;padding:8px 16px;border-radius:3px;font-weight:700!important;}
+.navlinks .admin-link{border:1px solid var(--gold);color:var(--gold)!important;padding:7px 14px;border-radius:3px;font-weight:700!important;}
+@media(max-width:900px){
+  .nav-toggle{display:block;}
+  .navlinks{display:none;position:absolute;top:72px;left:0;right:0;background:#0a0f1c;flex-direction:column;padding:14px 24px 20px;border-bottom:1px solid var(--line);gap:2px;box-shadow:0 20px 40px rgba(0,0,0,0.4);}
+  .navlinks.open{display:flex;}
+  .navlinks li{width:100%;}
+  .navlinks a{display:block;width:100%;padding:13px 8px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="brand"><img src="logo.jpg" alt="Rangers EFC" class="crest"><div class="brand-text"><div class="name">RANGERS</div><div class="sub">Player Profiles</div></div></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+  <ul class="navlinks" id="navLinks">
+    <li><a href="index.html" data-page="home">Home</a></li>
+    <li><a href="players.html" data-page="players" class="active">Roster</a></li>
+    <li><a href="tournament-live.html" data-page="live">🔴 Live Tournament</a></li>
+    <li><a href="rules.html" data-page="rules">Rules</a></li>
+    <li><a href="news.html" data-page="news">News</a></li>
+    <li><a href="mvp-vote.html" data-page="mvp">MVP Vote</a></li>
+    <li><a href="index.html#join" class="cta">Join Us</a></li>
+    <li><a href="auth.html" style="border:1px solid var(--line);padding:7px 14px;border-radius:3px;">Sign In</a></li>
+    <li><a href="tournament-hub.html" class="admin-link">🔒 Admin</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="eyebrow">Full Squad Directory</div>
+  <h1 class="page-title">Player Profiles</h1>
+  <p class="page-desc">Click any player to view their full stats breakdown, tournament history, current form, and achievements.</p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div id="overlay">
+  <div class="detail-card" id="detailCard"></div>
+</div>
+
+<script>
+const demoPlayers = [
+  {name:"RFC Captain", pos:"CAM", num:"#10", rating:92, captain:true, style:"Possession Play", goals:18, assists:22, apps:34, mvp:8,
+    form:["W","W","D","W","L"], badges:["Club MVP 2025","Playmaker of the Season","100+ Assists Career"],
+    history:[["Rangers UCL S1","Champion 🏆"],["COBEG League","Champion 🏆"],["EFOB Solo Cup","Runner-up 🥈"]]},
+  {name:"Striker Alpha", pos:"ST", num:"#9", rating:91, style:"Quick Counter", goals:24, assists:6, apps:31, mvp:6,
+    form:["W","W","W","D","W"], badges:["Top Scorer 2025","Hat-trick Hero x3"],
+    history:[["Rangers UCL S1","Champion 🏆"],["EFCOB Group Stage","2nd Place"]]},
+  {name:"Wing King", pos:"RW", num:"#7", rating:90, style:"Dribbler", goals:14, assists:16, apps:29, mvp:4,
+    form:["W","L","W","W","D"], badges:["Most Dribbles Completed","Fan Favourite"],
+    history:[["BID Tournament S3","Champion 🏆"],["Solo Knockout Cup","Semifinalist"]]},
+  {name:"Wall Keeper", pos:"GK", num:"#1", rating:90, style:"Sweeper Keeper", goals:0, assists:1, apps:33, mvp:5,
+    form:["W","W","W","D","W"], badges:["Golden Glove 2025","Most Clean Sheets"],
+    history:[["COBEG League","Champion 🏆"],["Rangers UCL S1","Champion 🏆"]]},
+  {name:"Stone Defender", pos:"CB", num:"#4", rating:87, style:"Long Ball", goals:3, assists:2, apps:30, mvp:2,
+    form:["W","D","W","W","L"], badges:["Defensive Wall Award"],
+    history:[["Club Civil War","Winning Side"]]},
+  {name:"Second Blade", pos:"ST", num:"#20", rating:86, style:"Quick Counter", goals:17, assists:5, apps:26, mvp:3,
+    form:["D","W","W","W","W"], badges:["Impact Sub of the Season"],
+    history:[["EFOB Solo Cup","Runner-up 🥈"]]},
+  {name:"Box Maestro", pos:"CAM", num:"#8", rating:88, style:"Possession Play", goals:9, assists:19, apps:28, mvp:3,
+    form:["W","W","D","W","W"], badges:["Vision Award"],
+    history:[["BID Tournament S3","Champion 🏆"]]},
+  {name:"Pass Master", pos:"CM", num:"#14", rating:88, style:"Possession Play", goals:6, assists:15, apps:27, mvp:2,
+    form:["W","W","W","D","L"], badges:["Pass Accuracy Leader"],
+    history:[["COBEG League","Champion 🏆"]]},
+];
+
+let players = [...demoPlayers];
+
+function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2);}
+function formDot(r){const cls=r==="W"?"fw":r==="L"?"fl":"fd";return `<div class="fdot ${cls}">${r}</div>`;}
+
+function renderGrid(){
+  document.getElementById('grid').innerHTML = players.map((p,i)=>`
+    <div class="pcard" onclick="openDetail(${i})">
+      <div class="p-avatar">${p.avatar_url ? `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : initials(p.name)}</div>
+      <div class="p-name">${p.name}</div>
+      <span class="p-pos">${p.pos}</span>
+      <div class="p-rating">${p.rating}</div>
+    </div>`).join('');
+}
+renderGrid();
+
+// Try to replace demo roster with your real Supabase data. Falls back
+// to demo data silently if Supabase isn't configured yet or is empty.
+async function loadLiveRoster(){
+  try{
+    const rows = await fetchPlayers();
+    if(rows && rows.length){
+      players = rows.map(row => ({
+        id: row.id, name: row.name, pos: row.position || row.category, num: row.number || '',
+        rating: row.rating ?? 75, captain: row.is_captain || false, style: row.style || '',
+        goals: row.goals ?? 0, assists: row.assists ?? 0, apps: 0, mvp: row.mvps ?? 0,
+        form: row.form || [], badges: [], history: [], // history loaded on-demand when opened
+        avatar_url: row.avatar_url || null
+      }));
+      renderGrid();
+    }
+  }catch(e){ console.warn('Live roster unavailable, showing demo roster:', e); }
+}
+loadLiveRoster();
+
+async function openDetail(i){
+  const p = players[i];
+  // For live (Supabase) players, fetch their real tournament history on demand
+  if(p.id && typeof fetchPlayerHistory === 'function'){
+    try{
+      const rows = await fetchPlayerHistory(p.id);
+      p.history = rows.map(r => [r.tournament_name, r.result]);
+    }catch(e){ /* keep empty history on failure */ }
+  }
+  document.getElementById('detailCard').innerHTML = `
+    <button class="close-btn" onclick="document.getElementById('overlay').classList.remove('show')">✕</button>
+    <div class="detail-head">
+      <div class="detail-avatar">${p.avatar_url ? `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : initials(p.name)}</div>
+      <div>
+        <div class="detail-name">${p.name} ${p.captain?'👑':''}</div>
+        <div class="detail-sub">${p.num} · ${p.pos} · ${p.style} · Rangers EFC</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><b>${p.rating}</b><span>Overall</span></div>
+      <div class="stat-box"><b>${p.goals}</b><span>Goals</span></div>
+      <div class="stat-box"><b>${p.assists}</b><span>Assists</span></div>
+      <div class="stat-box"><b>${p.apps}</b><span>Appearances</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Current Form</h4>
+      <div class="form-row-d">${p.form.length ? p.form.map(formDot).join('') : '<span style="font-family:\'Rajdhani\';color:var(--gray);font-size:12px;">No matches played yet</span>'}</div>
+    </div>
+    <div class="detail-section">
+      <h4>Tournament History</h4>
+      ${p.history.length ? p.history.map(h=>`<div class="history-item"><span>${h[0]}</span><span style="color:var(--gold);font-weight:600;">${h[1]}</span></div>`).join('') : '<p style="font-family:\'Rajdhani\';color:var(--gray);font-size:13px;">No tournament results recorded yet.</p>'}
+    </div>
+    <div class="detail-section">
+      <h4>Achievements (${p.mvp} MVPs Career)</h4>
+      <div class="badge-row">${p.badges.length ? p.badges.map(b=>`<span class="badge">🏅 ${b}</span>`).join('') : '<span style="font-family:\'Rajdhani\';color:var(--gray);font-size:13px;">No badges yet</span>'}</div>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('show');
+}
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') e.target.classList.remove('show'); });
+</script>
+
+<script>
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=> navLinks.classList.remove('open')));
+</script>
+</body>
+</html>

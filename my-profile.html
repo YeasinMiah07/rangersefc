@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | Rangers Efootball Club</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--royal:#0B1D3A;--royal2:#122a52;--black:#111111;--deep:#0a0f1c;--cyan:#00D4FF;--gold:#F5A623;--white:#eef3fb;--gray:#8a94a8;--line:rgba(255,255,255,0.08);--win:#2ecc71;--loss:#ff5c5c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);color:var(--white);font-family:'Poppins',sans-serif;font-weight:300;}
+h1,h2,h3{font-family:'Orbitron',sans-serif;}
+.container{max-width:760px;margin:0 auto;padding:0 40px 60px;}
+.cover-banner{height:140px;background:
+  radial-gradient(ellipse 70% 100% at 30% 0%, rgba(0,212,255,0.15), transparent 60%),
+  radial-gradient(ellipse 60% 100% at 90% 100%, rgba(245,166,35,0.1), transparent 60%),
+  linear-gradient(135deg,var(--royal2),var(--black));
+  margin:0 -40px 0;position:relative;overflow:hidden;}
+.cover-banner::after{content:'';position:absolute;inset:0;background-image:
+  repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,0.02) 31px);}
+.profile-header-row{display:flex;align-items:flex-end;gap:20px;margin-top:-46px;padding:0 4px 24px;position:relative;z-index:2;}
+.avatar-wrap{position:relative;flex-shrink:0;}
+.avatar-img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid var(--deep);background:linear-gradient(135deg,var(--royal2),var(--black));display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:26px;color:var(--cyan);}
+.avatar-upload-btn{position:absolute;bottom:0;right:0;width:30px;height:30px;border-radius:50%;background:var(--cyan);border:3px solid var(--deep);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;}
+.avatar-upload-btn:hover{background:var(--gold);}
+.avatar-upload-btn input{display:none;}
+.header-meta{padding-bottom:6px;}
+.header-meta .hname{font-family:'Orbitron';font-weight:900;font-size:20px;}
+.header-meta .husername{font-family:'Rajdhani';color:var(--gray);font-size:13px;}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:72px;background:rgba(10,15,28,0.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;}
+.crest{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--royal2),var(--black));border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;object-fit:contain;background-size:cover;font-family:'Orbitron';font-weight:900;font-size:13px;color:var(--cyan);}
+.brand-text .name{font-family:'Orbitron';font-weight:700;font-size:15px;}
+.brand-text .sub{font-family:'Rajdhani';font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.back-link{font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);text-decoration:none;}
+.eyebrow{font-family:'Rajdhani';font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);font-size:12px;display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.eyebrow::before{content:'';width:28px;height:2px;background:var(--gold);}
+.page-title{font-size:clamp(28px,4vw,40px);font-weight:900;margin-bottom:24px;}
+
+.card{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:10px;padding:28px;margin-bottom:22px;}
+.card h3{font-family:'Rajdhani';font-weight:700;font-size:16px;margin-bottom:16px;}
+.profile-head{display:flex;align-items:center;gap:18px;margin-bottom:6px;}
+.p-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--royal2),var(--black));border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:20px;color:var(--cyan);flex-shrink:0;}
+.role-badge{display:inline-block;font-family:'Rajdhani';font-size:10px;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-top:4px;}
+.role-public{background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3);}
+.role-player{background:rgba(46,204,113,0.12);color:var(--win);border:1px solid rgba(46,204,113,0.3);}
+.role-admin{background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.3);}
+
+label{display:block;font-family:'Rajdhani';font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;margin-top:16px;}
+label:first-of-type{margin-top:0;}
+input,textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:6px;padding:10px 12px;color:var(--white);font-family:'Rajdhani';font-size:14px;}
+textarea{min-height:80px;resize:vertical;}
+input:focus,textarea:focus{outline:none;border-color:var(--cyan);}
+input:disabled{opacity:0.5;}
+.locked-field{font-family:'Rajdhani';font-size:13px;color:var(--gray);background:rgba(255,255,255,0.02);border:1px dashed var(--line);border-radius:6px;padding:10px 12px;}
+.btn{margin-top:18px;background:var(--cyan);color:var(--black);border:none;padding:11px 24px;border-radius:6px;font-family:'Rajdhani';font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:13px;cursor:pointer;}
+.btn:hover{background:var(--gold);}
+.msg{margin-top:12px;font-family:'Rajdhani';font-size:13px;padding:10px 12px;border-radius:6px;display:none;}
+.msg.show{display:block;}
+.msg.err{background:rgba(255,92,92,0.1);border:1px solid rgba(255,92,92,0.3);color:var(--loss);}
+.msg.ok{background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);color:var(--win);}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px;}
+.stat-box{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;padding:12px;text-align:center;}
+.stat-box b{display:block;font-family:'Orbitron';font-size:18px;color:var(--gold);}
+.stat-box span{font-family:'Rajdhani';font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;}
+.note{font-family:'Rajdhani';font-size:12px;color:var(--gray);margin-top:8px;line-height:1.5;}
+.empty-notice{text-align:center;padding:30px;font-family:'Rajdhani';color:var(--gray);}
+.empty-notice a{color:var(--cyan);}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-family:'Rajdhani';font-size:14px;}
+.history-item:last-child{border-bottom:none;}
+.history-item .h-result{color:var(--gold);font-weight:700;}
+.history-empty{font-family:'Rajdhani';color:var(--gray);font-size:13px;padding:8px 0;}
+.tourn-info-box{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-family:'Rajdhani';font-size:13px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="brand"><img src="logo.jpg" alt="Rangers EFC" class="crest"><div class="brand-text"><div class="name">RANGERS</div><div class="sub">My Profile</div></div></a>
+  <a href="index.html" class="back-link">← Back to Main Site</a>
+</nav>
+
+<div class="cover-banner"></div>
+
+<div class="container">
+  <div class="profile-header-row">
+    <div class="avatar-wrap">
+      <div class="avatar-img" id="avatarDisplay">–</div>
+      <label class="avatar-upload-btn" title="Change photo">
+        📷
+        <input type="file" id="avatarFileInput" accept="image/*" onchange="handleAvatarUpload(event)">
+      </label>
+    </div>
+    <div class="header-meta">
+      <div class="hname" id="headerName">—</div>
+      <div class="husername" id="headerUsername">—</div>
+    </div>
+  </div>
+
+  <div class="eyebrow">Account Settings</div>
+  <h1 class="page-title" style="font-size:22px;margin-bottom:20px;">Manage Your Profile</h1>
+
+  <div id="loadingState" class="card"><p style="font-family:'Rajdhani';color:var(--gray);">Loading your account...</p></div>
+  <div id="notLoggedIn" class="card empty-notice" style="display:none;">
+    <p>You're not signed in.</p>
+    <p style="margin-top:8px;"><a href="auth.html">Go to Sign In / Sign Up →</a></p>
+  </div>
+
+  <div id="profileContent" style="display:none;">
+    <!-- ACCOUNT CARD -->
+    <div class="card">
+      <div class="profile-head">
+        <div>
+          <div id="emailDisplay" style="font-family:'Rajdhani';font-size:13px;color:var(--gray);"></div>
+          <span class="role-badge" id="roleBadge">–</span>
+        </div>
+      </div>
+      <label>Username</label>
+      <input type="text" id="usernameInput" placeholder="Unique username">
+      <button class="btn" onclick="saveUsername()">Save Username</button>
+      <div class="msg" id="usernameMsg"></div>
+      <label style="margin-top:20px;">Display Name</label>
+      <input type="text" id="displayNameInput" placeholder="Your name">
+      <button class="btn" onclick="saveDisplayName()">Save Name</button>
+      <div class="msg" id="nameMsg"></div>
+      <p class="note" id="avatarUploadNote"></p>
+    </div>
+
+    <!-- PLAYER-ONLY CARD -->
+    <div class="card" id="playerCard" style="display:none;">
+      <h3>⚽ My Player Profile</h3>
+      <div class="stat-row">
+        <div class="stat-box"><b id="statRating">–</b><span>Overall</span></div>
+        <div class="stat-box"><b id="statGoals">–</b><span>Goals</span></div>
+        <div class="stat-box"><b id="statAssists">–</b><span>Assists</span></div>
+        <div class="stat-box"><b id="statMvps">–</b><span>MVPs</span></div>
+      </div>
+      <p class="note">Stats, rating, and match form are managed by club admins based on match results. You can edit your playstyle and bio below.</p>
+      <label>In-Game Position</label>
+      <div class="locked-field" id="lockedPosition">–</div>
+      <label>Playstyle</label>
+      <input type="text" id="styleInput" placeholder="e.g. Quick Counter, Possession Play">
+      <label>Bio</label>
+      <textarea id="bioInput" placeholder="A short bio for your public player profile..."></textarea>
+      <button class="btn" onclick="savePlayerStyle()">Save Player Info</button>
+      <div class="msg" id="playerMsg"></div>
+    </div>
+
+    <!-- TOURNAMENT HISTORY -->
+    <div class="card" id="historyCard" style="display:none;">
+      <h3>🏆 My Tournament Results</h3>
+      <div id="historyList"></div>
+    </div>
+
+    <!-- JOIN A TOURNAMENT -->
+    <div class="card" id="joinCard" style="display:none;">
+      <h3>🎮 Join a Tournament</h3>
+      <p class="note" style="margin-bottom:12px;">Register yourself for the club's current live tournament.</p>
+      <div id="liveTournamentInfo"></div>
+      <button class="btn" onclick="handleJoinTournament()" id="joinBtn" style="display:none;">Join This Tournament</button>
+      <div class="msg" id="joinMsg"></div>
+    </div>
+
+    <!-- PUBLIC (non-player) NOTICE -->
+    <div class="card" id="publicNotice" style="display:none;">
+      <h3>Want a Player Profile?</h3>
+      <p class="note">Player profiles are for active Rangers squad members and require an access code from a club admin. Ask a club admin for the code, then sign up again from the Player Signup tab linking your name to your roster entry.</p>
+    </div>
+
+    <!-- ADMIN NOTICE -->
+    <div class="card" id="adminNotice" style="display:none;">
+      <h3>🔒 Admin Access</h3>
+      <p class="note">Your account has admin privileges — full access to Tournament Hub, roster management, and news posting.</p>
+      <a href="tournament-hub.html" class="btn" style="display:inline-block;text-decoration:none;">Open Tournament Hub</a>
+    </div>
+
+    <button class="btn" style="background:transparent;border:1px solid var(--line);color:var(--white);" onclick="handleSignOut()">Sign Out</button>
+  </div>
+</div>
+
+<script src="supabase-client.js"></script>
+<script>
+function showMsg(id, text, isError){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg show ' + (isError ? 'err' : 'ok');
+}
+
+let currentProfile = null;
+let currentPlayer = null;
+
+async function init(){
+  currentProfile = await getCurrentProfile();
+  document.getElementById('loadingState').style.display = 'none';
+
+  if(!currentProfile){
+    document.getElementById('notLoggedIn').style.display = 'block';
+    return;
+  }
+  document.getElementById('profileContent').style.display = 'block';
+
+  // Header + avatar
+  const initials = (currentProfile.display_name || currentProfile.email || '?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const avatarEl = document.getElementById('avatarDisplay');
+  if(currentProfile.avatar_url){
+    avatarEl.innerHTML = `<img src="${currentProfile.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    avatarEl.textContent = initials;
+  }
+  document.getElementById('headerName').textContent = currentProfile.display_name || 'Rangers Member';
+  document.getElementById('headerUsername').textContent = currentProfile.username ? '@' + currentProfile.username : 'No username set';
+
+  // Account card
+  document.getElementById('emailDisplay').textContent = currentProfile.email;
+  document.getElementById('usernameInput').value = currentProfile.username || '';
+  document.getElementById('displayNameInput').value = currentProfile.display_name || '';
+  const badge = document.getElementById('roleBadge');
+  badge.textContent = currentProfile.role.toUpperCase();
+  badge.className = 'role-badge role-' + currentProfile.role;
+
+  if(currentProfile.role === 'player' && currentProfile.player_id){
+    currentPlayer = await fetchLinkedPlayer(currentProfile.player_id);
+    if(currentPlayer){
+      document.getElementById('playerCard').style.display = 'block';
+      document.getElementById('statRating').textContent = currentPlayer.rating ?? '–';
+      document.getElementById('statGoals').textContent = currentPlayer.goals ?? 0;
+      document.getElementById('statAssists').textContent = currentPlayer.assists ?? 0;
+      document.getElementById('statMvps').textContent = currentPlayer.mvps ?? 0;
+      document.getElementById('lockedPosition').textContent = currentPlayer.position || currentPlayer.category || '–';
+      document.getElementById('styleInput').value = currentPlayer.style || '';
+      document.getElementById('bioInput').value = currentPlayer.bio || '';
+    }
+
+    // Tournament history
+    document.getElementById('historyCard').style.display = 'block';
+    const history = await fetchPlayerHistory(currentProfile.player_id);
+    const listEl = document.getElementById('historyList');
+    listEl.innerHTML = history.length
+      ? history.map(h => `<div class="history-item"><span>${h.tournament_name}</span><span class="h-result">${h.result}</span></div>`).join('')
+      : '<p class="history-empty">No tournament results recorded yet. These are added by a club admin after each event.</p>';
+
+    // Join tournament
+    document.getElementById('joinCard').style.display = 'block';
+    await loadLiveTournamentForJoin();
+  } else if(currentProfile.role === 'public'){
+    document.getElementById('publicNotice').style.display = 'block';
+  }
+
+  if(currentProfile.role === 'admin'){
+    document.getElementById('adminNotice').style.display = 'block';
+  }
+}
+
+async function loadLiveTournamentForJoin(){
+  const infoEl = document.getElementById('liveTournamentInfo');
+  const btn = document.getElementById('joinBtn');
+  const live = await fetchLiveTournament();
+  if(!live){
+    infoEl.innerHTML = '<div class="tourn-info-box">No tournament is currently open for signups.</div>';
+    return;
+  }
+  const signups = await fetchTournamentSignups(live.id);
+  const alreadyJoined = signups.some(s => s.player_id === currentProfile.player_id);
+  infoEl.innerHTML = `<div class="tourn-info-box"><b>${live.name}</b> (${live.format === 'ucl' ? 'UCL Style' : 'League'})<br>${signups.length} player(s) signed up so far</div>`;
+  if(alreadyJoined){
+    btn.textContent = "✓ You're signed up";
+    btn.disabled = true;
+  } else {
+    btn.style.display = 'inline-block';
+    btn.dataset.tournamentId = live.id;
+  }
+}
+
+async function handleJoinTournament(){
+  const btn = document.getElementById('joinBtn');
+  const tournamentId = btn.dataset.tournamentId;
+  const res = await joinTournament(parseInt(tournamentId));
+  if(res.ok){
+    showMsg('joinMsg', "You're signed up for the tournament!", false);
+    await loadLiveTournamentForJoin();
+  } else {
+    const reasons = { 'already-joined':'You already joined this tournament.', 'not-a-player':'Only linked player accounts can join.', 'not-logged-in':'Please sign in again.' };
+    showMsg('joinMsg', reasons[res.reason] || 'Could not join — try again.', true);
+  }
+}
+
+async function handleAvatarUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  document.getElementById('avatarUploadNote').textContent = 'Uploading...';
+  const res = await uploadAvatar(file);
+  if(res.ok){
+    document.getElementById('avatarUploadNote').textContent = 'Photo updated!';
+    init();
+  } else {
+    document.getElementById('avatarUploadNote').textContent = 'Upload failed: ' + res.error;
+  }
+}
+
+async function saveUsername(){
+  const username = document.getElementById('usernameInput').value.trim();
+  if(!username){ showMsg('usernameMsg', 'Username cannot be empty.', true); return; }
+  const result = await updateUsername(username);
+  if(result === 'ok'){ showMsg('usernameMsg', 'Username saved!', false); init(); }
+  else if(result === 'taken'){ showMsg('usernameMsg', 'That username is already taken.', true); }
+  else { showMsg('usernameMsg', 'Something went wrong.', true); }
+}
+
+async function saveDisplayName(){
+  const name = document.getElementById('displayNameInput').value.trim();
+  if(!name){ showMsg('nameMsg', 'Name cannot be empty.', true); return; }
+  const ok = await updateDisplayName(name);
+  showMsg('nameMsg', ok ? 'Saved!' : 'Something went wrong — check your Supabase connection.', !ok);
+  if(ok) init();
+}
+
+async function savePlayerStyle(){
+  const style = document.getElementById('styleInput').value.trim();
+  const bio = document.getElementById('bioInput').value.trim();
+  const ok = await updatePlayerStyle(style, bio);
+  showMsg('playerMsg', ok ? 'Player profile updated!' : 'Could not save — make sure your account is linked to a player.', !ok);
+}
+
+async function handleSignOut(){
+  await signOut();
+  window.location.href = 'auth.html';
+}
+
+init();
+</script>
+</body>
+</html>
